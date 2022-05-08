@@ -13,14 +13,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-function verifyJWT(req, res, next) {
-    const authHeader = req.headers.authorization;
-    if (!authHeader) {
-        return res.status(401).send({ message: 'unauthorized access' });
-    }
-    console.log('inside verifyJWT', authHeader);
-    next();
-}
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.7xsh1.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
@@ -30,18 +22,18 @@ async function run() {
         await client.connect();
         const groceryCollection = client.db('superShopGrocery').collection('grocery');
 
-        //AUTH
-        app.post('/login', async (req, res) => {
-            const user = req.body;
-            const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-                expiresIn: '1d'
-            });
-            res.send({ accessToken });
-        })
+        // //AUTH
+        // app.post('/login', async (req, res) => {
+        //     const user = req.body;
+        //     const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+        //         expiresIn: '1d'
+        //     });
+        //     res.send({ accessToken });
+        // })
 
         //Grocery API
 
-        app.get('/grocery', verifyJWT, async (req, res) => {
+        app.get('/grocery', async (req, res) => {
             const query = {};
             const cursor = groceryCollection.find(query);
             const groceries = await cursor.toArray();
