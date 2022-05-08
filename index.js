@@ -29,6 +29,14 @@ async function run() {
             res.send(groceries);
         });
 
+        app.get('/grocery1', async (req, res) => {
+            const email = req.query.email;
+            const query = { email: email };
+            const cursor = groceryCollection.find(query);
+            const groceries = await cursor.toArray();
+            res.send(groceries);
+        });
+
         app.get('/grocery/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
