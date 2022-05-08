@@ -42,7 +42,18 @@ async function run() {
             const result = await groceryCollection.insertOne(newInventory);
             res.send(result);
         });
-
+        //PUT
+        app.put('/grocery/:id', async (req, res) => {
+            const id = req.params.id;
+            const updateInventory = req.body;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updatedGrocery = {
+                $set: updateInventory
+            };
+            const result = await groceryCollection.updateOne(filter, updatedGrocery, options);
+            res.send(result);
+        });
         //DELETE 
         app.delete('/grocery/:id', async (req, res) => {
             const id = req.params.id;
