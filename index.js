@@ -49,7 +49,10 @@ async function run() {
             const filter = { _id: ObjectId(id) };
             const options = { upsert: true };
             const updatedGrocery = {
-                $set: { quantity: updateInventory.quantity, }
+                $set: {
+                    quantity: updateInventory.quantity,
+                    sold: updateInventory.sold,
+                }
             };
             const result = await groceryCollection.updateOne(filter, updatedGrocery, options);
             res.send(result);
