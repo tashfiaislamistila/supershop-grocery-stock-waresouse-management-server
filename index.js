@@ -13,7 +13,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-
+function verifyJWT(req, res, next) {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        return res.status(401).send({ message: 'unauthorized access' });
+    }
+    console.log('inside verifyJWT', authHeader);
+    next();
+}
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.7xsh1.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
@@ -34,7 +41,7 @@ async function run() {
 
         //Grocery API
 
-        app.get('/grocery', async (req, res) => {
+        app.get('/grocery', verifyJWT, async (req, res) => {
             const query = {};
             const cursor = groceryCollection.find(query);
             const groceries = await cursor.toArray();
@@ -42,6 +49,7 @@ async function run() {
         });
 
         app.get('/grocery1', async (req, res) => {
+
             const email = req.query.email;
             const query = { email: email };
             const cursor = groceryCollection.find(query);
