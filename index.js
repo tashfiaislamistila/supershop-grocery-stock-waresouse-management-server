@@ -33,6 +33,13 @@ async function run() {
             const query = { _id: ObjectId(id) };
             const grocery = await groceryCollection.findOne(query);
             res.send(grocery);
+        });
+
+        //POST
+        app.post('/grocery', async (req, res) => {
+            const newInventory = req.body;
+            const result = await groceryCollection.insertOne(newInventory);
+            res.send(result);
         })
 
     }
