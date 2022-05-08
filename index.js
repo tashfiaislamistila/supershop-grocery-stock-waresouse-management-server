@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const { ObjectID } = require('bson');
 require('dotenv').config();
@@ -21,6 +22,17 @@ async function run() {
     try {
         await client.connect();
         const groceryCollection = client.db('superShopGrocery').collection('grocery');
+
+        //AUTH
+        app.post('/login', async (req, res) => {
+            const user = req.body;
+            const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+                expiresIn: '1d'
+            });
+            res.send({ accessToken });
+        })
+
+        //Grocery API
 
         app.get('/grocery', async (req, res) => {
             const query = {};
